@@ -1,0 +1,252 @@
+/* Cool Navigation Button Styles */
+
+/* Header Navigation Enhancements */
+.navbar-nav .nav-item .nav-link {
+    position: relative;
+    padding: 15px 25px !important;
+    margin: 0 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 30px;
+    overflow: hidden;
+    background: linear-gradient(45deg, transparent, transparent);
+    color: #fff !important;
+}
+
+.navbar-nav .nav-item .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #74b9ff, #0984e3, #00b894, #fdcb6e);
+    background-size: 400% 400%;
+    animation: gradientShift 3s ease infinite;
+    border-radius: 30px;
+    z-index: -1;
+    transition: left 0.4s ease;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.navbar-nav .nav-item .nav-link:hover::before {
+    left: 0;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(116, 185, 255, 0.4);
+    color: #fff !important;
+}
+
+.navbar-nav .nav-item .nav-link i {
+    margin-right: 8px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.navbar-nav .nav-item .nav-link:hover i {
+    transform: scale(1.2) rotate(10deg);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Add glow effect on active/current page */
+.navbar-nav .nav-item .nav-link.active {
+    background: linear-gradient(45deg, #74b9ff, #0984e3);
+    box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.navbar-nav .nav-item .nav-link.active::before {
+    left: 0;
+}
+
+/* Footer Navigation Enhancements */
+.footer-nav-menu {
+    list-style: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 20px !important;
+    margin-bottom: 30px !important;
+}
+
+.footer-nav-item {
+    position: relative;
+}
+
+.footer-nav-link {
+    display: inline-block;
+    padding: 12px 24px;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-nav-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.3), transparent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.5s ease;
+}
+
+.footer-nav-link:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.footer-nav-link:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+/* Add icons to footer nav links */
+.footer-nav-link[href="/"]::before {
+    content: '🏠 ';
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
+
+.footer-nav-link[href="/about"]::before {
+    content: '👨‍💻 ';
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
+
+.footer-nav-link[href="/contact"]::before {
+    content: '📧 ';
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
+
+/* Floating animation for footer nav */
+.footer-nav-item:nth-child(1) { animation: floatNav 3s ease-in-out infinite; }
+.footer-nav-item:nth-child(2) { animation: floatNav 3s ease-in-out infinite 0.5s; }
+.footer-nav-item:nth-child(3) { animation: floatNav 3s ease-in-out infinite 1s; }
+
+@keyframes floatNav {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .footer-nav-menu {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+    
+    .footer-nav-link {
+        width: 200px;
+        text-align: center;
+    }
+    
+    .navbar-nav .nav-item .nav-link {
+        padding: 10px 20px !important;
+        margin: 2px 0;
+        font-size: 0.9rem;
+    }
+    
+    /* Mobile hamburger menu styles */
+    .navbar-toggler {
+        border: none !important;
+        padding: 4px 8px;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 6px;
+    }
+    
+    .navbar-toggler:focus {
+        box-shadow: none !important;
+        outline: none !important;
+    }
+    
+    .navbar-collapse {
+        background: rgba(0, 0, 0, 0.9);
+        margin-top: 10px;
+        border-radius: 10px;
+        padding: 15px;
+    }
+    
+    .navbar-nav {
+        text-align: center;
+    }
+    
+    .navbar-nav .nav-item {
+        margin: 5px 0;
+    }
+}
+
+/* Special hover effects for header */
+.navbar-nav .nav-item:nth-child(1) .nav-link:hover {
+    box-shadow: 0 10px 25px rgba(116, 185, 255, 0.4);
+}
+
+.navbar-nav .nav-item:nth-child(2) .nav-link:hover {
+    box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4);
+}
+
+.navbar-nav .nav-item:nth-child(3) .nav-link:hover {
+    box-shadow: 0 10px 25px rgba(253, 203, 110, 0.4);
+}
+
+/* Add pulse animation to current page indicator */
+.nav-link.current-page {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { 
+        box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+    }
+    50% { 
+        box-shadow: 0 5px 25px rgba(116, 185, 255, 0.8);
+    }
+}
+
+/* Navbar brand enhancement */
+.navbar-brand {
+    font-weight: bold !important;
+    background: linear-gradient(45deg, #74b9ff, #fdcb6e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientText 3s ease infinite;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.1);
+    text-shadow: 0 0 20px rgba(116, 185, 255, 0.5);
+}
+
+@keyframes gradientText {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}

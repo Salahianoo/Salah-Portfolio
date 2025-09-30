@@ -1,0 +1,71 @@
+<%- include("../partials/header.ejs") %>
+
+<!-- Link to weather project styles -->
+<link rel="stylesheet" href="/styles/weather-project.css">
+
+<!-- Weather-themed animated background -->
+<div class="weather-bg">
+  <!-- Floating weather icons -->
+  <div class="weather-icons">
+    <div class="weather-icon">☀️</div>
+    <div class="weather-icon">⛅</div>
+    <div class="weather-icon">🌧️</div>
+    <div class="weather-icon">❄️</div>
+    <div class="weather-icon">🌈</div>
+  </div>
+
+  <!-- Python Project Details -->
+  <section class="container py-5">
+    <div class="row">
+      <div class="col-md-10 mx-auto">
+        <div class="weather-project-card">
+          <h1 class="text-center mb-4 weather-title">🌦️ Weather Forecast Dashboard</h1>
+          
+          <div class="text-center mb-4 weather-image-container">
+            <img src="/images/wheather py.png" alt="Weather Dashboard" class="img-fluid" style="max-width: 200px;">
+          </div>
+
+          <div class="project-details">
+            <h3>🚀 Project Overview</h3>
+            <p class="lead">
+              Built a comprehensive Weather Forecast Dashboard using Streamlit that provides real-time weather data 
+              and forecasts for any city worldwide. This interactive web application demonstrates proficiency in 
+              Python programming, data visualization, and API integration.
+            </p>
+
+            <h3>✨ Key Features</h3>
+            <ul class="weather-features">
+              <li>Real-time weather data from OpenWeatherMap API</li>
+              <li>5-day weather forecast with detailed metrics</li>
+              <li>Interactive temperature and humidity trend charts</li>
+              <li>Responsive dashboard with metric cards</li>
+              <li>Dynamic city search functionality</li>
+              <li>Data visualization with Matplotlib</li>
+            </ul>
+
+            <h3>🛠️ Technologies Used</h3>
+            <div class="tech-stack text-center">
+              <a href="#" class="tech-badge">🐍 Python</a>
+              <a href="#" class="tech-badge">⚡ Streamlit</a>
+              <a href="#" class="tech-badge">🐼 Pandas</a>
+              <a href="#" class="tech-badge">📊 Matplotlib</a>
+              <a href="#" class="tech-badge">🌐 OpenWeatherMap API</a>
+              <a href="#" class="tech-badge">📈 Data Visualization</a>
+            </div>
+
+            <div class="weather-action-buttons">
+              <a href="http://localhost:8501" target="_blank" rel="noopener noreferrer" class="weather-btn weather-btn-primary">
+                🚀 Launch Weather App
+              </a>
+              <a href="/" class="weather-btn weather-btn-secondary">
+                🏠 Back to Portfolio
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%- include("../partials/footer.ejs") %>

@@ -1,0 +1,51 @@
+/* Section spacing so the footer doesn't cover it */
+#certificates { 
+  margin: 2.5rem 0 1rem; 
+  padding-bottom: 5rem;           /* <-- prevents footer overlap */
+}
+
+.cert-section { 
+  max-width: 1000px; 
+  margin: 0 auto; 
+  padding: 0 1rem; 
+  text-align: center;
+}
+
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* wider cards */
+  gap: 1.25rem;
+}
+
+.cert {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  padding: .75rem .75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Key part: constrain image height and keep aspect */
+.cert img {
+  width: 100%;
+  aspect-ratio: 16 / 9;         /* keeps a landscape shape */
+  object-fit: contain;           /* show full certificate inside the frame */
+  background: #f7f7f8;           /* nice backdrop around the image */
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+/* tidy texts */
+.cert h3 { font-size: 1rem; margin: .75rem 0 .25rem; }
+.cert p  { margin: 0; font-size: .9rem; color: #6b7280; }
+
+/* reveal animation (keep as is) */
+.reveal { opacity:0; transform: translateY(18px) scale(.98); filter: blur(2px);
+          transition: opacity .7s ease, transform .7s ease, filter .7s ease; }
+.reveal.show { opacity:1; transform:none; filter:none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity:1; transform:none; filter:none; transition:none; }
+}
