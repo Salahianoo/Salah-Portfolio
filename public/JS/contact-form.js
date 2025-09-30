@@ -93,6 +93,12 @@ function setButtonLoading(loading) {
 contactForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
+    // Prevent multiple submissions
+    if (submitBtn.disabled) {
+        console.log('Form already being processed, ignoring submission');
+        return;
+    }
+    
     // Hide previous messages
     hideMessages();
     
@@ -115,8 +121,7 @@ contactForm.addEventListener('submit', async function(e) {
     setButtonLoading(true);
     
     try {
-        // Try backend method first (more reliable)
-        console.log('Trying backend submission...');
+        console.log('Submitting contact form...');
         
         const response = await fetch('/contact', {
             method: 'POST',
@@ -126,29 +131,24 @@ contactForm.addEventListener('submit', async function(e) {
             body: JSON.stringify(formData)
         });
         
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const result = await response.json();
         
         if (result.success) {
-            showMessage('success', 'Message Sent Successfully!', result.message);
+            showMessage('success', 'Message Sent Successfully!', result.message || 'Thank you for your message! I will get back to you soon.');
             contactForm.reset();
-            return; // Exit successfully
         } else {
-            throw new Error(result.message || 'Backend submission failed');
+            throw new Error(result.message || 'Failed to send message');
         }
         
-    } catch (backendError) {
-        console.error('Backend error:', backendError);
-        console.log('Backend failed, trying EmailJS...');
-        
-        // Fallback to EmailJS
-        try {
-            await tryEmailJS(formData);
-        } catch (emailJSError) {
-            console.error('EmailJS also failed:', emailJSError);
-            // Final fallback
-            sendEmailFallback(formData);
-        }
+    } catch (error) {
+        console.error('Contact form error:', error);
+        showMessage('error', 'Sending Failed', 'Sorry, there was an error sending your message. Please try again or contact me directly at salahshadi2005@gmail.com');
     } finally {
+        // Always reset button state
         setButtonLoading(false);
     }
 });

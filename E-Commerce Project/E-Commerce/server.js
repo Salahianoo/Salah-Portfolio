@@ -13,7 +13,7 @@ const app = express()
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://salahmart.vercel.app', 'https://salahmart.netlify.app'] 
+    ? ['https://salah-ecommerce.vercel.app', 'https://salah-ecommerce.netlify.app'] 
     : 'http://localhost:5173',
   credentials: true
 }))
