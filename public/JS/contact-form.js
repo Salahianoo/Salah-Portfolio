@@ -181,12 +181,14 @@ async function tryEmailJS(formData) {
     }
     
     const templateParams = {
+        to_name: 'Salah Shadi',           // Your name (recipient)
         to_email: 'salahshadi2005@gmail.com',
-        from_name: formData.from_name,
-        from_email: formData.from_email,
-        reply_to: formData.from_email,
+        from_name: formData.from_name,     // Client's name
+        from_email: formData.from_email,   // Client's email
+        reply_to: formData.from_email,     // Reply to client
         subject: formData.subject,
-        message: formData.message
+        message: formData.message,
+        client_name: formData.from_name    // For auto-reply
     };
 
     console.log('EmailJS template params:', templateParams);
