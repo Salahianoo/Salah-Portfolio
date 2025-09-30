@@ -5,11 +5,14 @@ import nodemailer from "nodemailer";
 const app = express();
 const port = process.env.PORT || 3005;
 
+// Set view engine
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
 // Middleware
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-// to connect ejs files
 app.get("/", (req, res) => {
   res.render("index.ejs");
 });
