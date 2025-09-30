@@ -55,6 +55,13 @@ app.post("/contact", async (req, res) => {
       timestamp: new Date().toISOString()
     });
     
+    // Debug environment variables
+    console.log('Environment check:', {
+      EMAIL_USER: process.env.EMAIL_USER ? 'Set' : 'Not set',
+      GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD ? 'Set' : 'Not set',
+      NODE_ENV: process.env.NODE_ENV
+    });
+    
     // Create nodemailer transporter (using Gmail SMTP)
     const transporter = nodemailer.createTransport({
       service: 'gmail',

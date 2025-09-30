@@ -123,19 +123,31 @@ contactForm.addEventListener('submit', async function(e) {
     try {
         console.log('Submitting contact form...');
         
+        // Add timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
         const response = await fetch('/contact', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(formData),
+            signal: controller.signal
         });
         
+        clearTimeout(timeoutId);
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Server error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
         
         const result = await response.json();
+        console.log('Server response:', result);
         
         if (result.success) {
             showMessage('success', 'Message Sent Successfully!', result.message || 'Thank you for your message! I will get back to you soon.');
@@ -146,7 +158,21 @@ contactForm.addEventListener('submit', async function(e) {
         
     } catch (error) {
         console.error('Contact form error:', error);
-        showMessage('error', 'Sending Failed', 'Sorry, there was an error sending your message. Please try again or contact me directly at salahshadi2005@gmail.com');
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        });
+        
+        let errorMessage = 'Sorry, there was an error sending your message. Please try again or contact me directly at salahshadi2005@gmail.com';
+        
+        if (error.name === 'AbortError') {
+            errorMessage = 'Request timed out. Please check your connection and try again.';
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Network error. Please check your connection and try again.';
+        }
+        
+        showMessage('error', 'Sending Failed', errorMessage);
     } finally {
         // Always reset button state
         setButtonLoading(false);
