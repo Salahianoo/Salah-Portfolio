@@ -120,12 +120,15 @@ contactForm.addEventListener('submit', async function(e) {
     // Set loading state
     setButtonLoading(true);
     
+    // Try backend first with shorter timeout, then fallback to EmailJS
+    let backendSuccess = false;
+    
     try {
-        console.log('Submitting contact form...');
+        console.log('Trying backend submission...');
         
-        // Add timeout to prevent hanging
+        // Shorter timeout for backend (10 seconds)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
         
         const response = await fetch('/contact', {
             method: 'POST',
@@ -137,50 +140,46 @@ contactForm.addEventListener('submit', async function(e) {
         });
         
         clearTimeout(timeoutId);
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
+        console.log('Backend response status:', response.status);
         
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Server error response:', errorText);
-            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-        }
-        
-        const result = await response.json();
-        console.log('Server response:', result);
-        
-        if (result.success) {
-            showMessage('success', 'Message Sent Successfully!', result.message || 'Thank you for your message! I will get back to you soon.');
-            contactForm.reset();
-        } else {
-            throw new Error(result.message || 'Failed to send message');
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Backend response:', result);
+            
+            if (result.success) {
+                showMessage('success', 'Message Sent Successfully!', result.message || 'Thank you for your message! I will get back to you soon.');
+                contactForm.reset();
+                backendSuccess = true;
+            }
         }
         
     } catch (error) {
-        console.error('Contact form error:', error);
-        console.error('Error details:', {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-        });
-        
-        let errorMessage = 'Sorry, there was an error sending your message. Please try again or contact me directly at salahshadi2005@gmail.com';
-        
-        if (error.name === 'AbortError') {
-            errorMessage = 'Request timed out. Please check your connection and try again.';
-        } else if (error.message.includes('Failed to fetch')) {
-            errorMessage = 'Network error. Please check your connection and try again.';
-        }
-        
-        showMessage('error', 'Sending Failed', errorMessage);
-    } finally {
-        // Always reset button state
-        setButtonLoading(false);
+        console.log('Backend failed, trying EmailJS fallback...', error.message);
     }
+    
+    // If backend failed, try EmailJS
+    if (!backendSuccess) {
+        try {
+            console.log('Using EmailJS fallback...');
+            await tryEmailJS(formData);
+            backendSuccess = true; // Mark as success since EmailJS worked
+        } catch (emailError) {
+            console.error('EmailJS also failed:', emailError);
+            showMessage('error', 'Sending Failed', 'Both email methods failed. Please contact me directly at salahshadi2005@gmail.com or try again later.');
+        }
+    }
+    
+    // Always reset button state
+    setButtonLoading(false);
 });
 
 // EmailJS method as fallback
 async function tryEmailJS(formData) {
+    // Check if EmailJS is available
+    if (typeof emailjs === 'undefined') {
+        throw new Error('EmailJS not available');
+    }
+    
     const templateParams = {
         to_email: 'salahshadi2005@gmail.com',
         from_name: formData.from_name,
@@ -190,7 +189,7 @@ async function tryEmailJS(formData) {
         message: formData.message
     };
 
-    console.log('Template params:', templateParams);
+    console.log('EmailJS template params:', templateParams);
 
     const result = await emailjs.send(
         'service_dp231m8',
@@ -199,7 +198,7 @@ async function tryEmailJS(formData) {
     );
     
     console.log('EmailJS Success:', result);
-    showMessage('success', 'Message Sent Successfully!', 'Thank you for reaching out. I\'ll get back to you soon!');
+    showMessage('success', 'Message Sent Successfully!', 'Thank you for reaching out. I\'ll get back to you soon! (Sent via backup method)');
     contactForm.reset();
 }
 
