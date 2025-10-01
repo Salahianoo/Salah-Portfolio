@@ -126,9 +126,9 @@ contactForm.addEventListener('submit', async function(e) {
     try {
         console.log('Trying backend submission...');
         
-        // Longer timeout for backend (30 seconds)
+        // Much longer timeout for backend (60 seconds)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
         
         const response = await fetch('/contact', {
             method: 'POST',
