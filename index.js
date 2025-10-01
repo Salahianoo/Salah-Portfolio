@@ -108,32 +108,29 @@ app.post("/contact", async (req, res) => {
       `
     };
     
-    // Send response immediately, then send emails in background
+    // Send both emails with individual error handling (ORIGINAL WAY)
+    try {
+      // Send message to you first
+      console.log('Sending message to you...');
+      const resultToYou = await transporter.sendMail(mailToYou);
+      console.log('✅ Email sent to you successfully:', resultToYou.messageId);
+    } catch (error) {
+      console.error('❌ Failed to send email to you:', error.message);
+      // Continue to try sending confirmation to client
+    }
+
+    try {
+      // Send confirmation to client
+      console.log('Sending confirmation to client...');
+      const resultToClient = await transporter.sendMail(mailToClient);
+      console.log('✅ Confirmation sent to client successfully:', resultToClient.messageId);
+    } catch (error) {
+      console.error('❌ Failed to send confirmation to client:', error.message);
+    }
+    
     res.json({ 
       success: true, 
       message: 'Thank you for your message! I will get back to you soon.' 
-    });
-    
-    // Send both emails in background with detailed error logging
-    transporter.sendMail(mailToYou).then(result => {
-      console.log('✅ Email sent to you successfully:', result.messageId);
-      console.log('Email details:', result);
-    }).catch(error => {
-      console.error('❌ Failed to send email to you:', error.message);
-      console.error('Full error details:', error);
-      console.error('SMTP Config check:', {
-        service: 'gmail',
-        user: process.env.EMAIL_USER || 'fallback used',
-        passLength: (process.env.GMAIL_APP_PASSWORD || 'fallback').length
-      });
-    });
-
-    transporter.sendMail(mailToClient).then(result => {
-      console.log('✅ Confirmation sent to client successfully:', result.messageId);
-      console.log('Confirmation details:', result);
-    }).catch(error => {
-      console.error('❌ Failed to send confirmation to client:', error.message);
-      console.error('Full confirmation error:', error);
     });
     
   } catch (error) {

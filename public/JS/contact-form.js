@@ -120,57 +120,37 @@ contactForm.addEventListener('submit', async function(e) {
     // Set loading state
     setButtonLoading(true);
     
-    // Try backend first with shorter timeout, then fallback to EmailJS
-    let backendSuccess = false;
-    
     try {
-        console.log('Trying backend submission...');
-        
-        // Much longer timeout for backend (60 seconds)
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        console.log('Submitting contact form...');
         
         const response = await fetch('/contact', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
-            signal: controller.signal
+            body: JSON.stringify(formData)
         });
         
-        clearTimeout(timeoutId);
-        console.log('Backend response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
-        if (response.ok) {
-            const result = await response.json();
-            console.log('Backend response:', result);
-            
-            if (result.success) {
-                showMessage('success', 'Message Sent Successfully!', result.message || 'Thank you for your message! I will get back to you soon.');
-                contactForm.reset();
-                backendSuccess = true;
-            }
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('success', 'Message Sent Successfully!', result.message || 'Thank you for your message! I will get back to you soon.');
+            contactForm.reset();
+        } else {
+            throw new Error(result.message || 'Failed to send message');
         }
         
     } catch (error) {
-        console.log('Backend failed, trying EmailJS fallback...', error.message);
+        console.error('Contact form error:', error);
+        showMessage('error', 'Sending Failed', 'Sorry, there was an error sending your message. Please try again or contact me directly at salahshadi2005@gmail.com');
+    } finally {
+        // Always reset button state
+        setButtonLoading(false);
     }
-    
-    // If backend failed, try EmailJS
-    if (!backendSuccess) {
-        try {
-            console.log('Using EmailJS fallback...');
-            await tryEmailJS(formData);
-            backendSuccess = true; // Mark as success since EmailJS worked
-        } catch (emailError) {
-            console.error('EmailJS also failed:', emailError);
-            showMessage('error', 'Sending Failed', 'Both email methods failed. Please contact me directly at salahshadi2005@gmail.com or try again later.');
-        }
-    }
-    
-    // Always reset button state
-    setButtonLoading(false);
 });
 
 // EmailJS method as fallback - simplified
