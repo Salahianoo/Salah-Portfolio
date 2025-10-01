@@ -133,70 +133,33 @@ contactForm.addEventListener('submit', async function(e) {
     }
 });
 
-// EmailJS method - sends both emails like the original backend
+// EmailJS method - just send notification to you (working part)
 async function tryEmailJS(formData) {
     // Check if EmailJS is available
     if (typeof emailjs === 'undefined') {
         throw new Error('EmailJS not available');
     }
     
-    try {
-        // Email 1: Send notification to you
-        const notificationParams = {
-            to_email: 'salahshadi2005@gmail.com',
-            from_name: formData.from_name,
-            from_email: formData.from_email,
-            reply_to: formData.from_email,
-            subject: formData.subject,
-            message: formData.message
-        };
+    // Just send notification to you (this part works!)
+    const notificationParams = {
+        to_email: 'salahshadi2005@gmail.com',
+        from_name: formData.from_name,
+        from_email: formData.from_email,
+        reply_to: formData.from_email,
+        subject: formData.subject,
+        message: formData.message
+    };
 
-        console.log('Sending notification to you via EmailJS...');
-        const notificationResult = await emailjs.send(
-            'service_dp231m8',
-            'template_dj5mrn9',
-            notificationParams
-        );
-        console.log('✅ Notification sent:', notificationResult);
-
-        // Email 2: Send auto-reply to user
-        const autoReplyParams = {
-            to_email: formData.from_email, // Send to the user
-            user_name: formData.from_name,
-            from_name: 'Salah Shadi'
-        };
-
-        console.log('Sending auto-reply to user via EmailJS...');
-        const autoReplyResult = await emailjs.send(
-            'service_dp231m8',
-            'template_dj5mrn9', // We'll use the same template but configure it differently
-            autoReplyParams
-        );
-        console.log('✅ Auto-reply sent:', autoReplyResult);
-
-        showMessage('success', 'Message Sent Successfully!', 'Thank you for your message! I will get back to you soon.');
-        contactForm.reset();
-        
-    } catch (error) {
-        console.error('EmailJS error:', error);
-        
-        // Fallback: at least try to send notification to you
-        try {
-            const basicParams = {
-                to_email: 'salahshadi2005@gmail.com',
-                from_name: formData.from_name,
-                from_email: formData.from_email,
-                subject: formData.subject,
-                message: formData.message
-            };
-            
-            await emailjs.send('service_dp231m8', 'template_dj5mrn9', basicParams);
-            showMessage('success', 'Message Sent!', 'Your message has been sent! (Auto-reply may not have worked)');
-            contactForm.reset();
-        } catch (fallbackError) {
-            throw new Error('EmailJS failed completely');
-        }
-    }
+    console.log('Sending notification to you via EmailJS...');
+    const result = await emailjs.send(
+        'service_dp231m8',
+        'template_dj5mrn9',
+        notificationParams
+    );
+    
+    console.log('✅ EmailJS Success:', result);
+    showMessage('success', 'Message Sent Successfully!', 'Thank you for your message! I will get back to you soon. (Note: You will receive a manual reply instead of auto-reply)');
+    contactForm.reset();
 }
 
 // Fallback method using backend
