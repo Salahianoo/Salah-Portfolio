@@ -173,18 +173,19 @@ contactForm.addEventListener('submit', async function(e) {
     setButtonLoading(false);
 });
 
-// EmailJS method as fallback
+// EmailJS method as fallback - simplified
 async function tryEmailJS(formData) {
     // Check if EmailJS is available
     if (typeof emailjs === 'undefined') {
         throw new Error('EmailJS not available');
     }
     
+    // Just send notification to you (simplified)
     const templateParams = {
         to_email: 'salahshadi2005@gmail.com',
         from_name: formData.from_name,
         from_email: formData.from_email,
-        reply_to: formData.from_email,
+        reply_to: formData.from_email, 
         subject: formData.subject,
         message: formData.message
     };
@@ -198,7 +199,7 @@ async function tryEmailJS(formData) {
     );
     
     console.log('EmailJS Success:', result);
-    showMessage('success', 'Message Sent Successfully!', 'Thank you for reaching out. I\'ll get back to you soon! (Sent via backup method)');
+    showMessage('success', 'Message Sent Successfully!', 'Thank you for reaching out. I\'ll get back to you soon! (Note: Auto-reply only works with full backend)');
     contactForm.reset();
 }
 
