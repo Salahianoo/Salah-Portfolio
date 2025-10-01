@@ -108,29 +108,23 @@ app.post("/contact", async (req, res) => {
       `
     };
     
-    // Send both emails with individual error handling
-    try {
-      // Send message to you first
-      console.log('Sending message to you...');
-      const resultToYou = await transporter.sendMail(mailToYou);
-      console.log('✅ Email sent to you successfully:', resultToYou.messageId);
-    } catch (error) {
-      console.error('❌ Failed to send email to you:', error.message);
-      // Continue to try sending confirmation to client
-    }
-
-    try {
-      // Send confirmation to client
-      console.log('Sending confirmation to client...');
-      const resultToClient = await transporter.sendMail(mailToClient);
-      console.log('✅ Confirmation sent to client successfully:', resultToClient.messageId);
-    } catch (error) {
-      console.error('❌ Failed to send confirmation to client:', error.message);
-    }
-    
+    // Send response immediately, then send emails in background
     res.json({ 
       success: true, 
       message: 'Thank you for your message! I will get back to you soon.' 
+    });
+    
+    // Send both emails in background (don't await - fire and forget)
+    transporter.sendMail(mailToYou).then(result => {
+      console.log('✅ Email sent to you successfully:', result.messageId);
+    }).catch(error => {
+      console.error('❌ Failed to send email to you:', error.message);
+    });
+
+    transporter.sendMail(mailToClient).then(result => {
+      console.log('✅ Confirmation sent to client successfully:', result.messageId);
+    }).catch(error => {
+      console.error('❌ Failed to send confirmation to client:', error.message);
     });
     
   } catch (error) {
