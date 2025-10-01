@@ -121,28 +121,8 @@ contactForm.addEventListener('submit', async function(e) {
     setButtonLoading(true);
     
     try {
-        console.log('Submitting contact form...');
-        
-        const response = await fetch('/contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showMessage('success', 'Message Sent Successfully!', result.message || 'Thank you for your message! I will get back to you soon.');
-            contactForm.reset();
-        } else {
-            throw new Error(result.message || 'Failed to send message');
-        }
+        console.log('Using EmailJS (Gmail SMTP blocked on Render)...');
+        await tryEmailJS(formData);
         
     } catch (error) {
         console.error('Contact form error:', error);
@@ -153,34 +133,70 @@ contactForm.addEventListener('submit', async function(e) {
     }
 });
 
-// EmailJS method as fallback - simplified
+// EmailJS method - sends both emails like the original backend
 async function tryEmailJS(formData) {
     // Check if EmailJS is available
     if (typeof emailjs === 'undefined') {
         throw new Error('EmailJS not available');
     }
     
-    // Just send notification to you (simplified)
-    const templateParams = {
-        to_email: 'salahshadi2005@gmail.com',
-        from_name: formData.from_name,
-        from_email: formData.from_email,
-        reply_to: formData.from_email, 
-        subject: formData.subject,
-        message: formData.message
-    };
+    try {
+        // Email 1: Send notification to you
+        const notificationParams = {
+            to_email: 'salahshadi2005@gmail.com',
+            from_name: formData.from_name,
+            from_email: formData.from_email,
+            reply_to: formData.from_email,
+            subject: formData.subject,
+            message: formData.message
+        };
 
-    console.log('EmailJS template params:', templateParams);
+        console.log('Sending notification to you via EmailJS...');
+        const notificationResult = await emailjs.send(
+            'service_dp231m8',
+            'template_dj5mrn9',
+            notificationParams
+        );
+        console.log('✅ Notification sent:', notificationResult);
 
-    const result = await emailjs.send(
-        'service_dp231m8',
-        'template_dj5mrn9',
-        templateParams
-    );
-    
-    console.log('EmailJS Success:', result);
-    showMessage('success', 'Message Sent Successfully!', 'Thank you for reaching out. I\'ll get back to you soon! (Note: Auto-reply only works with full backend)');
-    contactForm.reset();
+        // Email 2: Send auto-reply to user
+        const autoReplyParams = {
+            to_email: formData.from_email, // Send to the user
+            user_name: formData.from_name,
+            from_name: 'Salah Shadi'
+        };
+
+        console.log('Sending auto-reply to user via EmailJS...');
+        const autoReplyResult = await emailjs.send(
+            'service_dp231m8',
+            'template_dj5mrn9', // We'll use the same template but configure it differently
+            autoReplyParams
+        );
+        console.log('✅ Auto-reply sent:', autoReplyResult);
+
+        showMessage('success', 'Message Sent Successfully!', 'Thank you for your message! I will get back to you soon.');
+        contactForm.reset();
+        
+    } catch (error) {
+        console.error('EmailJS error:', error);
+        
+        // Fallback: at least try to send notification to you
+        try {
+            const basicParams = {
+                to_email: 'salahshadi2005@gmail.com',
+                from_name: formData.from_name,
+                from_email: formData.from_email,
+                subject: formData.subject,
+                message: formData.message
+            };
+            
+            await emailjs.send('service_dp231m8', 'template_dj5mrn9', basicParams);
+            showMessage('success', 'Message Sent!', 'Your message has been sent! (Auto-reply may not have worked)');
+            contactForm.reset();
+        } catch (fallbackError) {
+            throw new Error('EmailJS failed completely');
+        }
+    }
 }
 
 // Fallback method using backend
